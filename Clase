@@ -1,0 +1,96 @@
+#include <iostream>
+#include <string>
+#define _CRT_SECURE_NO_WARNINGS_
+using namespace std;
+
+class Bilet {
+private:
+	//static int nrBilet;
+	char* categorie;
+	int rand;
+	int loc;
+	float pret;
+	char poartaAcces;
+
+public:
+	Bilet()  {
+		this->categorie = new char [strlen("N/A") + 1];
+		strcpy(this->categorie, "N/A");
+
+		this->rand = 0;
+		this->loc = 0;
+		this->pret = 0;
+		this->poartaAcces = 'A';
+
+	}
+
+	Bilet(char* categorie, int rand, int loc, float pret, char poartaAcces) {
+		this->categorie = new char[strlen(categorie) + 1];
+		strcpy(this->categorie, categorie);
+
+		this->rand = rand;
+		this->loc = loc;
+		this->pret = pret;
+		this->poartaAcces = poartaAcces;
+	}
+
+	void setCategorie(char* categorie){
+		if (this->categorie != NULL)
+			delete[]this->categorie;
+
+		this->categorie = new char[strlen(categorie) + 1];
+		strcpy(this->categorie, categorie);
+	}
+
+	void setPret(int pret) {
+		this->pret = pret;
+	}
+
+	void setLoc(int lod) {
+		this->loc = loc;
+	}
+
+	void setRand(int rand) {
+		this->rand = rand;
+	}
+
+	void setPoartaAcces(char poartaAcces) {
+		this->poartaAcces = poartaAcces;
+	}
+
+	char* getCategorie() {
+		return this->categorie;
+	}
+
+	int getPret() {
+		return this->pret;
+	}
+	int getRand() {
+		return this->rand;
+	}
+	int getLoc() {
+		return this->loc;
+	}
+	char getPoartaAcces() {
+		return this->poartaAcces;
+	}
+
+	friend ostream& operator<<(ostream& out, const Bilet& b1) {
+		out << "Categorie" << b1.categorie << ";";
+		out << "Rand " << b1.rand << ";";
+		out << "Loc " << b1.loc << ";";
+		out << "Pret" << b1.pret << ";";
+		out << "Poarta de acces" << b1.poartaAcces << ";";
+		
+		return out;
+	}
+
+	friend istream& operator>>(istream& in, const Bilet& b2) {
+		cout << "Rand:";
+		in >> b2.rand;
+		cout << "Categorie:";
+		in >> b2.categorie;
+		cout << "Loc:";
+		in >> b2.loc;
+	}
+};
