@@ -7,7 +7,6 @@ using namespace std;
 
 class Bilet {
 private:
-	//static int nrBilet;
 	char* categorie;
 	int rand;
 	int loc;
@@ -151,10 +150,6 @@ public:
 				return b1;
 	}
 					
-		
-
-		
-
 	char* gasesteInelul() {
 		char* inel = new char[20];
 
@@ -174,5 +169,61 @@ public:
 			a = 0;
 
 
+	}
+};
+
+class Meci {
+private:
+	char* titlu;
+	int bileteVandute;
+	float* preturi;
+	
+
+public:
+	Meci() {
+		this->bileteVandute = 0;
+		this->preturi = NULL;
+
+		this->titlu = new char[strlen("Anonim") + 1];
+		strcpy(this->titlu, "Anonim");
+
+	}
+
+	Meci(char* titlu, int bileteVandute, float* preturi) {
+		this->bileteVandute = bileteVandute;
+
+		for (int i = 0; i < this->bileteVandute; i++)
+			this->preturi[i] = preturi[i];
+
+		this->titlu = new char[strlen(titlu) + 1];
+		strcpy(this->titlu, titlu);
+	}
+
+	int getBilete() {
+		return this->bileteVandute;
+	}
+
+	char* getTitlu() {
+		return this->titlu;
+	}
+	float* getPreturi() {
+		return this->preturi;
+	}
+	void setBilete(int bilete) {
+		this->bileteVandute = bilete;
+	}
+	void setTitlu(char* titlu) {
+		if (this->titlu != NULL)
+			delete[]this->titlu;
+
+		this->titlu = new char[strlen(titlu) + 1];
+		strcpy(this->titlu, titlu);
+	}
+	void setPreturi(float* preturi) {
+		if (this->preturi != NULL)
+			delete[]this->preturi;
+
+		for (int i = 0; i < this->bileteVandute; i++)
+			this->preturi[i] = preturi[i];
 	}
 };
