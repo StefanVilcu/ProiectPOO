@@ -1,4 +1,6 @@
 #include <iostream>
+#include <iomanip>
+#include <fstream>
 #include <string>
 #define _CRT_SECURE_NO_WARNINGS_
 using namespace std;
@@ -75,7 +77,10 @@ public:
 		return this->poartaAcces;
 	}
 
-	friend ostream& operator<<(ostream& out, const Bilet& b1) {
+	friend ostream& operator<<(ostream&, Bilet&);
+	friend istream& operator>>(istream&, Bilet&);
+
+	friend ostream& operator<<(ostream& out, const Bilet b1) {
 		out << "Categorie" << b1.categorie << ";";
 		out << "Rand " << b1.rand << ";";
 		out << "Loc " << b1.loc << ";";
@@ -88,9 +93,86 @@ public:
 	friend istream& operator>>(istream& in, const Bilet& b2) {
 		cout << "Rand:";
 		in >> b2.rand;
-		cout << "Categorie:";
-		in >> b2.categorie;
-		cout << "Loc:";
+		if (b2.categorie != NULL)
+			delete[]b2.categorie;
+		cout << endl << "Categorie:";
+		in >> b2.categorie; 
+		cout << endl << "Loc:";
 		in >> b2.loc;
+		cout << endl << "Pret:";
+		in >> b2.pret;
+		cout << endl << "Poarta de Acces:";
+		in >> b2.poartaAcces;
+
+		return in;
+	}
+
+	Bilet operator>(Bilet& b1) {
+		if (strcmp(this->categorie, b1.categorie) == 0)
+		{
+			if (this->rand < b1.rand)
+				return *this;
+			else
+				if (this->rand > b1.rand)
+					return b1;
+				else
+					if (this->loc < b1.loc)
+						return *this;
+					else
+						if (this->loc > b1.loc)
+							return b1;
+		}
+		else
+			if (this->categorie == "Tribuna")
+				return *this;
+			else
+				return b1;
+	}
+
+	Bilet operator<(Bilet& b1) {
+		if (strcmp(this->categorie, b1.categorie) == 0)
+		{
+			if (this->rand > b1.rand)
+				return *this;
+			else
+				if (this->rand < b1.rand)
+					return b1;
+				else
+					if (this->loc > b1.loc)
+						return *this;
+					else
+						if (this->loc < b1.loc)
+							return b1;
+		}
+		else
+			if (this->categorie == "Peluza")
+				return *this;
+			else
+				return b1;
+	}
+					
+		
+
+		
+
+	char* gasesteInelul() {
+		char* inel = new char[20];
+
+		if (this->rand <= 25)
+			strcpy(inel, "Inelul 1");
+		else
+			strcpy(inel, "Inelul 2");
+			
+		return inel;
+	}
+
+	bool esteLaTribuna() {
+		bool a;
+		if (strcmp(this->categorie, "Tribuna") == 0)
+			a = 1;
+		else
+			a = 0;
+
+
 	}
 };
