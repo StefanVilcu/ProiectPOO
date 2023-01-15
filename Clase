@@ -1,9 +1,21 @@
-#include <iostream>
 #include <iomanip>
 #include <fstream>
 #include <string>
+#include <iostream>
+#include <string>
+#include <ostream>
+#include <istream>
+
 #define _CRT_SECURE_NO_WARNINGS_
 using namespace std;
+
+
+using std::cout;
+using std::cin;
+using std::string;
+using std::endl;
+using std::ostream;
+using std::istream;
 
 class Bilet {
 private:
@@ -76,6 +88,11 @@ public:
 		return this->poartaAcces;
 	}
 
+	~Bilet() {
+		if (this->categorie != NULL)
+			delete[]this->categorie;
+	}
+
 	friend ostream& operator<<(ostream&, Bilet&);
 	friend istream& operator>>(istream&, Bilet&);
 
@@ -89,22 +106,55 @@ public:
 		return out;
 	}
 
-	friend istream& operator>>(istream& in, const Bilet& b2) {
-		cout << "Rand:";
-		in >> b2.rand;
-		if (b2.categorie != NULL)
-			delete[]b2.categorie;
-		cout << endl << "Categorie:";
-		in >> b2.categorie; 
-		cout << endl << "Loc:";
-		in >> b2.loc;
-		cout << endl << "Pret:";
-		in >> b2.pret;
-		cout << endl << "Poarta de Acces:";
-		in >> b2.poartaAcces;
+	Bilet(Bilet& b2) {
+		this->categorie = new char[strlen(b2.categorie) + 1];
+		strcpy(this->categorie, b2.categorie);
+
+		this->rand = b2.rand;
+		this->loc = b2.loc;
+		this->pret = b2.pret;
+		this->poartaAcces = b2.poartaAcces;
+	}
+
+	Bilet operator=(const Bilet& b1) {
+		if (this != &b1) {
+			if (this->categorie != NULL)
+				delete[]this->categorie;
+			
+			this->categorie = new char[strlen(b1.categorie) + 1];
+			strcpy(this->categorie, b1.categorie);
+
+			this->rand = b1.rand;
+			this->loc = b1.loc;
+			this->pret = b1.pret;
+			this->poartaAcces = b1.poartaAcces;
+		}
+
+	}
+
+	friend istream& operator >> (istream& in, Bilet& p) {
+		if (p.categorie != NULL)
+			delete[]p.categorie;
+		p.categorie = new char[strlen(p.categorie) + 1];
+
+		cout << "Introudceti categoria biletului:";
+		in >> p.categorie;
+
+		cout << "Introduceti randul biletului:";
+		in >> p.rand;
+
+		cout << "Introduceti locul biletului:";
+		in >> p.loc;
+
+		cout << "Introduceti poarta de acces:";
+		in >> p.poartaAcces;
+
+		cout << "Introduceti pretul biletului:";
+		in >> p.pret;
 
 		return in;
 	}
+	// verific care bilet are locul mai in fata 
 
 	Bilet operator>(Bilet& b1) {
 		if (strcmp(this->categorie, b1.categorie) == 0)
@@ -167,8 +217,7 @@ public:
 			a = 1;
 		else
 			a = 0;
-
-
+		return a;
 	}
 };
 
@@ -177,10 +226,12 @@ private:
 	char* titlu;
 	int bileteVandute;
 	float* preturi;
+	const int codMeci;
 	
 
 public:
-	Meci() {
+	Meci() : codMeci(0)
+	{
 		this->bileteVandute = 0;
 		this->preturi = NULL;
 
@@ -189,7 +240,8 @@ public:
 
 	}
 
-	Meci(char* titlu, int bileteVandute, float* preturi) {
+	Meci(char* titlu, int bileteVandute, float* preturi) : codMeci(0) 
+	{
 		this->bileteVandute = bileteVandute;
 
 		for (int i = 0; i < this->bileteVandute; i++)
@@ -219,11 +271,164 @@ public:
 		this->titlu = new char[strlen(titlu) + 1];
 		strcpy(this->titlu, titlu);
 	}
-	void setPreturi(float* preturi) {
+	void setPreturi(float* preturi, int nrBilete) {
 		if (this->preturi != NULL)
 			delete[]this->preturi;
 
-		for (int i = 0; i < this->bileteVandute; i++)
+		this->preturi = new float[nrBilete];
+
+		for (int i = 0; i < nrBilete; i++)
 			this->preturi[i] = preturi[i];
+	}
+
+	friend ostream& operator<<(ostream& out, const Meci m1) {
+		out << "Titlu" << m1.titlu << ";";
+		out << "Preturi" << m1.preturi << ";";
+		out << "Bilete Vandute" << m1.bileteVandute << ";";
+
+
+		return out;
+	}
+
+	Meci(const Meci& m1) : codMeci(0) {
+
+		this->bileteVandute = m1.bileteVandute;
+
+		for (int i = 0; i < this->bileteVandute; i++)
+			this->preturi[i] = m1.preturi[i];
+
+		this->titlu = new char[strlen(m1.titlu) + 1];
+		strcpy(this->titlu, m1.titlu);
+	}
+
+	Meci operator = (const Meci& m1) {
+		if (this != &m1) {
+			if (this->titlu != NULL)
+				delete[]this->titlu;
+			if (this->preturi != NULL)
+				delete[]this->preturi;
+
+			this->bileteVandute = m1.bileteVandute;
+
+			for (int i = 0; i < this->bileteVandute; i++)
+				this->preturi[i] = m1.preturi[i];
+
+			this->titlu = new char[strlen(m1.titlu) + 1];
+			strcpy(this->titlu, m1.titlu);
+		}
+	}
+
+	bool operator==( const Meci& m1)
+	{
+		if (strcmp(this->titlu, m1.titlu) == 0)
+			return true;
+		else
+			return false;
+	}
+
+	// verific care meci a vandut mai bine 
+
+	Meci operator>=(const Meci& m1) {
+		if (this->bileteVandute >= m1.bileteVandute)
+			return *this;
+		else
+			if (m1.bileteVandute > this->bileteVandute)
+				return m1;
+	}
+
+	int incasari(const Meci& m1) {
+		int suma = 0;
+		for (int i = 0; i < this->bileteVandute; i++)
+			suma += suma + this->preturi[i];
+		return suma;
+	}
+
+	Meci maiScump(const Meci& m1) {
+		int max = 0;
+		bool k = 0;
+		for (int i = 0; i < this->bileteVandute; i++)
+			if (this->preturi[i] > max)
+				k = 0;
+		for (int i = 0; i < m1.bileteVandute; i++)
+			if (m1.preturi[i] > max)
+				k = 1;
+
+		if (k == 0)
+			return *this;
+		else
+			return m1;
+	}
+};
+
+class Stadion {
+	char* denumire;
+	int capacitate;
+	bool areNocturna;
+	float chirie;
+	int meciuriGazduite;
+
+
+	Stadion() {
+		this->denumire = new char[strlen("Anonim") + 1];
+		strcpy(this->denumire, "Anonim");
+
+		this->areNocturna = 0;
+		this->capacitate = 0;
+		this->chirie = 0;
+		this->meciuriGazduite = 0;
+	}
+
+	Stadion(char* denumire, int capacitate, bool areNocturna, float chirie, int meciuriGazduite) {
+		this->denumire = new char[strlen(denumire) + 1];
+		strcpy(this->denumire, denumire);
+
+		this->areNocturna = areNocturna;
+		this->capacitate = capacitate;
+		this->chirie = chirie;
+		this->meciuriGazduite = meciuriGazduite;
+	}
+
+	Stadion(const Stadion& s1) {
+		this->denumire = new char[strlen(s1.denumire) + 1];
+		strcpy(this->denumire, s1.denumire);
+
+		this->areNocturna = s1.areNocturna;
+		this->capacitate = s1.capacitate;
+		this->chirie = s1.chirie;
+		this->meciuriGazduite = s1.meciuriGazduite;
+	}
+
+	friend ostream& operator<<(ostream& out, const Stadion s1) {
+		out << "Denumire" << s1.denumire << ";";
+		out << "Nocturna" << s1.areNocturna << ";";
+		out << "Capacitate" << s1.capacitate << ";";
+		out << "Chirie" << s1.chirie << ";";
+		out << "Meciuri Gazduite" << s1.meciuriGazduite << ";";
+
+		return out;
+	}
+
+	// operatorul >>
+	friend istream& operator >> (istream& in, Stadion& p) {
+		if (p.denumire != NULL)
+			delete[]p.denumire;
+		p.denumire = new char[strlen(p.denumire) + 1];
+
+		cout << "Introudceti denumirea Stadionului:";
+		in >> p.denumire;
+
+		cout << "Are stadionul nocturna?";
+		in >> p.areNocturna;
+
+		cout << "Introduceti capacitatea stadionului:";
+		in >> p.capacitate;
+
+		cout << "Introduceti chiria stadionului";
+		in >> p.chirie;
+
+		cout << "CNP:";
+		in >> p.meciuriGazduite;
+
+		return in;
 	}
 };
